@@ -10,7 +10,13 @@ stages:
     steps:
     - script: echo "Desplegando en ambiente de calidad"
     - script: |
+        echo "Autenticando en Azure..."
         az login --service-principal --username fc02865c-2243-4d70-b9f3-c1abeb62470c --password a610ec0d8cc878d9941b49ac211a8e4f6806efe529eb796482303f15aeb7b33506-8115e3dc-1efc-4c6b-91ce-b4a6fed62dd100f062701c67770f --tenant <tu-id-de-suscripcion>
+        if [ $? -ne 0 ]; then
+          echo "Error de autenticación"
+          exit 1
+        fi
+        echo "Desplegando en App Service de Calidad..."
         az webapp deploy --name Calidad --resource-group Diego_web --src-path $(Build.SourcesDirectory)
       displayName: 'Deploy to Calidad'
 
@@ -22,6 +28,12 @@ stages:
     steps:
     - script: echo "Desplegando en ambiente productivo"
     - script: |
+        echo "Autenticando en Azure..."
         az login --service-principal --username fc02865c-2243-4d70-b9f3-c1abeb62470c --password a610ec0d8cc878d9941b49ac211a8e4f6806efe529eb796482303f15aeb7b33506-8115e3dc-1efc-4c6b-91ce-b4a6fed62dd100f062701c67770f --tenant <tu-id-de-suscripcion>
+        if [ $? -ne 0 ]; then
+          echo "Error de autenticación"
+          exit 1
+        fi
+        echo "Desplegando en App Service de Productivo..."
         az webapp deploy --name Productivo --resource-group Diego_web --src-path $(Build.SourcesDirectory)
       displayName: 'Deploy to Productivo'
